@@ -1,0 +1,14 @@
+# ROS / colcon build output
+build/
+install/
+log/
+__pycache__/
+*.pyc
+
+# simulator binaries, recordings, scratch
+*.zip
+*.app/
+*.mp4
+*.mov
+autodrive_devkit/tools/_batch_*.json
+.DS_Store

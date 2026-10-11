@@ -1,0 +1,23 @@
+{
+ "mode": "gap",
+ "v_max": 10.322,
+ "a_lat": 7.102,
+ "a_brake": 5.105,
+ "v_corner": 4.335,
+ "a_brake_entry": 7.473,
+ "stop_margin": 0.472,
+ "latency": 0.082,
+ "kp_speed": 0.2,
+ "steer_gain": 0.851,
+ "side_clear": 0.271,
+ "k_side": 0.298,
+ "front_half_width": 0.155,
+ "steer_smooth": 0.267,
+ "fov_deg": 71.458,
+ "half_width": 0.258,
+ "disparity": 0.433,
+ "lookahead_max": 1.303,
+ "depth_tol": 0.03,
+ "tc_slip": 0.15,
+ "tc_offset": 0.5
+}

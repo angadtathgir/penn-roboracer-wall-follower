@@ -1,0 +1,51 @@
+[penn-challenge]    10.403  laps=[11.389, 10.403]
+[pc3]    11.097  laps=[66.898, 11.097]
+[pc2]    10.984  laps=[60.736, 10.984]
+Traceback (most recent call last):
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 140, in <module>
+    main()
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 134, in main
+    out = r.run(p, a.laps, a.timeout, log)
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 87, in run
+    rclpy.spin_once(self.n, timeout_sec=0.05)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 208, in spin_once
+    executor.spin_once(timeout_sec=timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 812, in spin_once
+    self._spin_once_impl(timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 801, in _spin_once_impl
+    handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 784, in wait_for_ready_callbacks
+    return next(self._cb_iter)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 685, in _wait_for_ready_callbacks
+    raise ExternalShutdownException()
+rclpy.executors.ExternalShutdownException
+Traceback (most recent call last):
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 140, in <module>
+    main()
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 134, in main
+    out = r.run(p, a.laps, a.timeout, log)
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 95, in run
+    self.cmd(thr, steer)
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 60, in cmd
+    self.pt.publish(Float32(data=float(thr)))
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/publisher.py", line 70, in publish
+    self.__publisher.publish(msg)
+rclpy._rclpy_pybind11.RCLError: Failed to publish: publisher's context is invalid, at ./src/rcl/publisher.c:389
+Traceback (most recent call last):
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 140, in <module>
+    main()
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 134, in main
+    out = r.run(p, a.laps, a.timeout, log)
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 87, in run
+    rclpy.spin_once(self.n, timeout_sec=0.05)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 208, in spin_once
+    executor.spin_once(timeout_sec=timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 812, in spin_once
+    self._spin_once_impl(timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 801, in _spin_once_impl
+    handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 784, in wait_for_ready_callbacks
+    return next(self._cb_iter)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 657, in _wait_for_ready_callbacks
+    wait_set = _rclpy.WaitSet(
+rclpy._rclpy_pybind11.RCLError: failed to initialize wait set: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/wait.c:130

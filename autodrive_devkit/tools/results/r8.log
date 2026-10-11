@@ -1,0 +1,136 @@
+[penn-challenge]     6.116  laps=[31.657, 6.116, 6.373, 6.137]
+[pc3]     6.728  laps=[32.967, 6.728, 6.747, 6.739]
+[pc2]     7.464  laps=[31.707, 7.527, 7.464, 7.499]
+[penn-challenge]     7.174  laps=[8.432, 7.206, 7.175, 7.174]
+[pc2]     6.824  laps=[7.917, 6.865, 6.824, 7.026]
+[pc3]     7.223  laps=[9.067, 7.28, 7.855, 7.223]
+[penn-challenge]     7.255  laps=[8.361, 7.255, 7.279, 7.313]
+[pc2]     7.538  laps=[8.699, 7.55, 7.684, 7.538]
+[pc3]     7.259  laps=[8.451, 7.309, 7.259, 7.368]
+[penn-challenge] collision  laps=[]
+[pc2] collision  laps=[]
+[pc3] collision  laps=[]
+[pc3] collision  laps=[]
+[pc3] collision  laps=[]
+[pc3] collision  laps=[]
+[pc3] collision  laps=[]
+[penn-challenge]     6.527  laps=[7.504, 6.527, 6.534, 6.54]
+[penn-challenge] collision  laps=[]
+[pc2]     7.240  laps=[8.376, 7.24, 7.342, 7.327]
+[pc2] collision  laps=[]
+[pc2] collision  laps=[]
+[pc3]     7.416  laps=[8.673, 7.416, 7.611, 7.537]
+[penn-challenge]     6.528  laps=[7.715, 6.567, 6.528, 6.54]
+[penn-challenge] collision  laps=[]
+[penn-challenge] collision  laps=[]
+[pc2]     7.552  laps=[8.592, 7.552, 7.59, 7.596]
+[pc2] collision  laps=[]
+[pc3]     6.388  laps=[7.536, 6.482, 6.388, 6.422]
+[pc3] collision  laps=[]
+[pc2] collision  laps=[]
+[penn-challenge]     6.189  laps=[7.415, 6.284, 6.261, 6.189]
+[pc3]     6.342  laps=[8.098, 6.342, 6.365, 6.478]
+[pc2]     6.593  laps=[7.668, 6.612, 6.593, 6.594]
+[pc2] collision  laps=[]
+[penn-challenge]     7.067  laps=[8.094, 7.116, 7.085, 7.067]
+[pc2] collision  laps=[]
+[pc2] collision  laps=[]
+[pc2] collision  laps=[]
+[pc3]     6.786  laps=[8.054, 6.943, 6.786, 6.832]
+[pc3] collision  laps=[]
+[penn-challenge]     7.052  laps=[8.08, 7.071, 7.057, 7.052]
+[penn-challenge] collision  laps=[]
+[pc2]     7.363  laps=[8.642, 7.466, 7.363, 7.415]
+[pc2] collision  laps=[]
+[pc3]     6.915  laps=[8.149, 6.936, 6.915, 6.95]
+[pc2] collision  laps=[]
+[penn-challenge]     7.113  laps=[8.389, 7.122, 7.113, 7.185]
+[penn-challenge] collision  laps=[]
+[pc2]     6.932  laps=[8.036, 6.944, 6.932, 6.932]
+[pc3]     7.767  laps=[8.856, 7.789, 7.813, 7.767]
+[penn-challenge]     7.188  laps=[8.385, 7.265, 7.188, 7.234]
+[penn-challenge] collision  laps=[]
+[pc3] collision  laps=[8.41, 7.584]
+[pc2]     6.536  laps=[7.628, 6.577, 6.558, 6.536]
+[pc3] collision  laps=[]
+[pc3] collision  laps=[]
+[pc3] collision  laps=[]
+[penn-challenge]     6.515  laps=[7.609, 6.647, 6.515, 6.683]
+[penn-challenge] collision  laps=[8.015]
+[pc2]     7.576  laps=[8.601, 7.576, 7.586, 7.634]
+[penn-challenge] collision  laps=[]
+[penn-challenge] collision  laps=[]
+[pc3]     7.796  laps=[8.883, 7.814, 7.796, 7.814]
+[pc2]     6.951  laps=[8.255, 7.013, 6.951, 6.96]
+[penn-challenge]     6.385  laps=[7.487, 6.385, 6.388, 6.393]
+[pc3] collision  laps=[8.904, 7.805, 7.838]
+[pc3] collision  laps=[]
+[pc3] collision  laps=[]
+[pc3] collision  laps=[]
+[penn-challenge]     6.286  laps=[7.544, 6.286, 6.479, 6.51]
+[pc2]     7.365  laps=[8.588, 7.452, 7.38, 7.365]
+[penn-challenge] collision  laps=[]
+[pc2] collision  laps=[]
+[penn-challenge] collision  laps=[]
+[pc3]     6.465  laps=[7.588, 6.478, 6.465, 6.507]
+[pc2]     6.899  laps=[8.862, 6.976, 6.899, 7.485]
+[pc2] collision  laps=[]
+[penn-challenge]     7.727  laps=[8.771, 7.845, 7.727, 7.805]
+[penn-challenge] collision  laps=[]
+[penn-challenge] collision  laps=[]
+Traceback (most recent call last):
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 140, in <module>
+    main()
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 134, in main
+    out = r.run(p, a.laps, a.timeout, log)
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 74, in run
+    self.reset()
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 69, in reset
+    rclpy.spin_once(self.n, timeout_sec=0.01)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 208, in spin_once
+    executor.spin_once(timeout_sec=timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 812, in spin_once
+    self._spin_once_impl(timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 801, in _spin_once_impl
+    handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 784, in wait_for_ready_callbacks
+    return next(self._cb_iter)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 685, in _wait_for_ready_callbacks
+    raise ExternalShutdownException()
+rclpy.executors.ExternalShutdownException
+Traceback (most recent call last):
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 140, in <module>
+    main()
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 134, in main
+    out = r.run(p, a.laps, a.timeout, log)
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 87, in run
+    rclpy.spin_once(self.n, timeout_sec=0.05)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 208, in spin_once
+    executor.spin_once(timeout_sec=timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 812, in spin_once
+    self._spin_once_impl(timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 801, in _spin_once_impl
+    handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 784, in wait_for_ready_callbacks
+    return next(self._cb_iter)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 657, in _wait_for_ready_callbacks
+    wait_set = _rclpy.WaitSet(
+rclpy._rclpy_pybind11.RCLError: failed to initialize wait set: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/wait.c:130
+Traceback (most recent call last):
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 140, in <module>
+    main()
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 134, in main
+    out = r.run(p, a.laps, a.timeout, log)
+  File "/home/autodrive_devkit/src/autodrive_devkit/tools/run_laps.py", line 87, in run
+    rclpy.spin_once(self.n, timeout_sec=0.05)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 208, in spin_once
+    executor.spin_once(timeout_sec=timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 812, in spin_once
+    self._spin_once_impl(timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 801, in _spin_once_impl
+    handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 784, in wait_for_ready_callbacks
+    return next(self._cb_iter)
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 657, in _wait_for_ready_callbacks
+    wait_set = _rclpy.WaitSet(
+rclpy._rclpy_pybind11.RCLError: failed to initialize wait set: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/wait.c:130
