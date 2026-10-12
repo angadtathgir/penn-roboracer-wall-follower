@@ -1,19 +1,25 @@
 # Penn RoboRacer Technical Challenge: LiDAR Wall Follower
 
-A ROS 2 node that drives the AutoDRIVE RoboRacer around the IROS 2026 practice track (Porto) from its LiDAR scan.
+A ROS 2 node that drives the AutoDRIVE RoboRacer around the IROS 2026 practice track (Porto) from its LiDAR scan. It comes in two versions that share the same controller:
 
-**Fastest lap: 6.140 s.** This is the simulator's own lap timer, running `ros2 run autodrive_roboracer wall_follow_node`.
+| Version | Command | Sensors | Fastest lap | Mean flying lap | Wall contacts |
+|---|---|---|---|---|---|
+| **LiDAR + odometry** | `ros2 run autodrive_roboracer wall_follow_node` | LiDAR for steering, odometry for speed | **6.104 s** | 6.383 s | 0 in 31 laps |
+| **LiDAR only** | `ros2 run autodrive_roboracer wall_follow_node_lidar` | LiDAR only (speed from scan matching) | **6.115 s** | 6.360 s | 0 in 31 laps |
 
-**Video (Driver's Eye, unlisted):** _link added after upload_
+All times are from the simulator's own lap timer with the real ROS nodes. Each version drove 31 laps in a row (1 standing start + 30 flying laps). The worst flying lap was 6.984 s with odometry and 6.675 s LiDAR-only. Raw lap lists are in `tools/results/final_*_31laps.txt`.
 
-Consistency check with the real node: 33 laps across three runs. The car never touched a wall while driving. Over 30 flying laps, the best was 6.140 s, the mean 6.311 s and the worst 6.466 s. The standing-start first lap takes about 7.6–7.9 s.
+**Videos (Driver's Eye, unlisted):**
+- LiDAR + odometry: _link added after upload_
+- LiDAR only: _link added after upload_
 
 ## Running it
 
-Follow the challenge setup (Docker container, bridge, simulator connected, Driving Mode set to Autonomous), then:
+Follow the challenge setup (Docker container, bridge, simulator connected, Driving Mode set to Autonomous), then run one of:
 
 ```bash
-ros2 run autodrive_roboracer wall_follow_node
+ros2 run autodrive_roboracer wall_follow_node         # LiDAR + odometry
+ros2 run autodrive_roboracer wall_follow_node_lidar   # LiDAR only, no odometry subscription
 # any controller parameter can be overridden, e.g.
 ros2 run autodrive_roboracer wall_follow_node --ros-args -p mode:=wall -p v_max:=6.0
 ```
@@ -23,7 +29,8 @@ ros2 run autodrive_roboracer wall_follow_node --ros-args -p mode:=wall -p v_max:
 The code is split so the driving logic can be tested without ROS:
 
 - `autodrive_roboracer/wall_follow_core.py` holds the controller. It is plain numpy: a scan goes in, and throttle and steering come out.
-- `autodrive_roboracer/wall_follow_node.py` is the ROS 2 wrapper. It subscribes to `/lidar` (plus `/odom` for measured speed), runs the controller once per scan, and publishes `throttle_command` and `steering_command`. Every controller setting is a ROS parameter.
+- `autodrive_roboracer/wall_follow_node.py` is the ROS 2 wrapper, with one entry point per version. It subscribes to `/lidar` (plus `/odom` for measured speed in the odometry version), runs the controller once per scan, and publishes `throttle_command` and `steering_command`. Every controller setting is a ROS parameter.
+- `autodrive_roboracer/lidar_speed.py` estimates the car's speed from the LiDAR alone, for the LiDAR-only version.
 
 ### Steering
 
@@ -48,7 +55,19 @@ The target speed is the smallest of four limits:
 | Stopping room | `√(2 a_brake d)`, with *d* the free distance **along the arc being steered**, inside a car-width band | the car must be able to stop before anything on its actual path |
 | Corner entry | `√(v_corner² + 2 a_entry d_ahead)`, with *d_ahead* the wall dead ahead | the car must be slow enough for the next corner *before* it starts turning |
 
-Throttle is a feed-forward term (target / 24.9 m/s) plus proportional feedback on measured speed. On top of that sits **traction control**: wheel speed is capped at `v·(1 + 0.15) + 0.4`.
+Throttle is a feed-forward term (target / 24.9 m/s) plus proportional feedback on speed. Two rules sit on top:
+
+- **Traction control:** wheel speed is capped at `v·(1 + 0.15) + 0.4`, so the tyres don't spin.
+- **Hard braking:** once the car is more than 0.4 m/s over its target speed, the throttle drops to 0. In this simulator that locks the wheels, which brakes about 8.5 m/s². A throttle just under the car's speed only drags the motor.
+
+### Speed without odometry (LiDAR-only version)
+
+Both rules above need the car's speed. The LiDAR-only version estimates it from two sources and fuses them:
+
+1. **Scan matching:** the current scan is aligned to one taken about 20 ms earlier with point-to-line ICP (iterative closest point). Points are paired by beam angle, which is cheap and accurate because the car only moves a few centimetres between the two scans. The forward shift divided by the time gap is the speed.
+2. **Throttle model:** throttle sets wheel speed, so the car's speed follows the last command with limited acceleration and braking.
+
+The model predicts every scan. The scan-match result corrects it in proportion to how well the walls constrain forward motion. Walls facing the car give a confident correction; two parallel side walls give almost none, and there the model carries the estimate. Against odometry, the estimate is off by 0.17 m/s on average over a lap. The two versions end up with practically the same lap times.
 
 ## How it was tuned
 
@@ -70,22 +89,26 @@ What moved the lap time:
 | Random search over 60 gap-follow configs | 6.59 s flying lap, but only 15/60 configs clean |
 | Corner-entry speed limit (most crashes were at the hairpin after the long straight) | 6.51 s, and 45/60 configs clean over 3 laps |
 | Traction control (0 → 7 m/s took 2.36 s at full throttle and 1.10 s with slip capped at 15%) | 6.28 s, and 61/66 configs clean over 3 laps |
-| Wider search plus a small aim-point shift toward the inside of turns | **6.12 s** in the runner, **6.140 s** with the ROS node |
+| Wider search plus a small aim-point shift toward the inside of turns | 6.12 s in the runner, 6.140 s with the ROS node |
+| Hard braking (throttle 0 once 0.4 m/s over target) | **6.104 s** with the ROS node (LiDAR + odometry), **6.115 s** LiDAR-only |
 
 Things that didn't work:
 
 - Planning for more grip (`a_lat` ≥ 9) made the car slide wide and lose time.
 - Aiming toward the *outside* of corners for a late apex was slower at every offset I tried, and crashed above 0.3 m.
+- A braking planner that looked ahead over a window of the scan was slower (6.39 s) and crashed until it was detuned.
+- The classic two-wall mode (`mode:=wall`) with every upgrade above managed 7.32 s at best, and only 14 of 60 tuned configs were clean. Follow-the-gap is the default for that reason.
 
-For a sense of the remaining headroom: a forward/backward speed-profile estimate on the track centreline (30.5 m, tightest radius 1.07 m) gives 6.42 s at 7 m/s² of grip. The reactive controller beats the centreline by cutting corners.
+For a sense of the remaining headroom: a forward/backward speed-profile estimate on the track centreline (30.5 m, tightest radius 1.07 m) gives 6.42 s at 7 m/s² of grip. The reactive controller beats the centreline by cutting corners. On the 27.8 m path the car actually drives, the ideal profile is 5.58 s. Closing that last ~0.5 s needs braking points planned from a map, i.e. a racing line, rather than a reactive wall follower.
 
 ## Repository layout
 
 ```
 autodrive_devkit/
   autodrive_roboracer/wall_follow_core.py   controller (no ROS)
-  autodrive_roboracer/wall_follow_node.py   ROS 2 node
-  setup.py                                  adds the wall_follow_node entry point
+  autodrive_roboracer/wall_follow_node.py   ROS 2 node (both versions)
+  autodrive_roboracer/lidar_speed.py        LiDAR-only speed estimate
+  setup.py                                  adds wall_follow_node and wall_follow_node_lidar
   tools/                                    sysid, lap runner, tuner, lap monitor, results
 ```
 

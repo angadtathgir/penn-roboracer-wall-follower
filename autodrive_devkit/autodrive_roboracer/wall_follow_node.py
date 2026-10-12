@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """ROS 2 wall-follow node for the AutoDRIVE RoboRacer.
 
-Subscribes to the LiDAR scan (and odometry for measured speed), runs the controller in
-wall_follow_core once per scan, and publishes throttle and steering in [-1, 1].
+Two versions share this file and the controller in wall_follow_core:
+    ros2 run autodrive_roboracer wall_follow_node         # LiDAR steering + odometry speed
+    ros2 run autodrive_roboracer wall_follow_node_lidar   # LiDAR only (speed from scan matching)
+Each runs the controller once per scan and publishes throttle and steering in [-1, 1].
 Every controller parameter is a ROS parameter, e.g.
     ros2 run autodrive_roboracer wall_follow_node --ros-args -p mode:=wall -p v_max:=8.0
 """
@@ -20,9 +22,11 @@ NS = '/autodrive/roboracer_1'
 
 
 class WallFollowNode(Node):
-    def __init__(self):
-        super().__init__('wall_follow_node')
+    def __init__(self, lidar_only=False):
+        super().__init__('wall_follow_node_lidar' if lidar_only else 'wall_follow_node')
         self.ctrl = Controller()
+        if lidar_only:
+            self.ctrl.params['speed_source'] = 'lidar'
         for name, default in self.ctrl.params.items():
             self.ctrl.params[name] = self.declare_parameter(name, default).value
         self.add_on_set_parameters_callback(self.on_params)
@@ -33,12 +37,16 @@ class WallFollowNode(Node):
         self.pub_throttle = self.create_publisher(Float32, NS + '/throttle_command', qos)
         self.pub_steering = self.create_publisher(Float32, NS + '/steering_command', qos)
         self.create_subscription(LaserScan, NS + '/lidar', self.on_scan, qos)
-        self.create_subscription(Odometry, NS + '/odom', self.on_odom, qos)
+        # the LiDAR-only version never touches odometry; its speed comes from scan matching
+        self.lidar_only = self.ctrl.params['speed_source'] == 'lidar'
+        if not self.lidar_only:
+            self.create_subscription(Odometry, NS + '/odom', self.on_odom, qos)
 
         self.speed = 0.0
         self.last_stamp = None
         self.n = 0
-        self.get_logger().info(f"wall_follow_node up, mode={self.ctrl.params['mode']}")
+        self.get_logger().info(f"{self.get_name()} up, mode={self.ctrl.params['mode']}, "
+                               f"speed from {'lidar' if self.lidar_only else 'odom'}")
 
     def on_params(self, params):
         for p in params:
@@ -58,7 +66,8 @@ class WallFollowNode(Node):
         self.last_stamp = now
 
         throttle, steering = self.ctrl.step(msg.ranges, msg.angle_min, msg.angle_increment,
-                                            self.speed, dt)
+                                            None if self.lidar_only else self.speed, dt)
+        self.speed = self.ctrl.last['v_used']
         self.publish(throttle, steering)
 
         self.n += 1
@@ -74,9 +83,9 @@ class WallFollowNode(Node):
         self.pub_steering.publish(Float32(data=float(steering)))
 
 
-def main(args=None):
+def main(args=None, lidar_only=False):
     rclpy.init(args=args)
-    node = WallFollowNode()
+    node = WallFollowNode(lidar_only)
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
@@ -87,6 +96,10 @@ def main(args=None):
             node.publish(0.0, 0.0)
         node.destroy_node()
         rclpy.try_shutdown()
+
+
+def main_lidar_only(args=None):
+    main(args, lidar_only=True)
 
 
 if __name__ == '__main__':

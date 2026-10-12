@@ -64,7 +64,7 @@ class Controller:
             'v_full_throttle': 24.9,   # measured: throttle 0.1 settles at 2.49 m/s
             'kp_speed': 0.2,
             'throttle_min': 0.0,
-            'brake_hyst': 99.0,        # full brake once speed exceeds target by this (m/s)
+            'brake_hyst': 0.4,         # full brake once speed exceeds target by this (m/s)
             # traction control: throttle sets wheel speed, so asking for far more than the
             # car is doing just spins the tyres. Cap wheel speed at v * (1 + slip) + offset.
             # Measured 0 -> 7 m/s: 2.36 s at full throttle, 1.10 s with slip 0.15.
