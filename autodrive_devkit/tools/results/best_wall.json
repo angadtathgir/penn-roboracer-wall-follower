@@ -1,0 +1,23 @@
+{
+ "mode": "wall",
+ "v_max": 11.102,
+ "a_lat": 8.306,
+ "a_brake": 6.489,
+ "v_corner": 2.953,
+ "a_brake_entry": 8.073,
+ "tc_slip": 0.167,
+ "tc_offset": 0.53,
+ "brake_hyst": 0.123,
+ "stop_margin": 0.63,
+ "latency": 0.051,
+ "kp_speed": 0.256,
+ "steer_gain": 0.5,
+ "side_clear": 0.342,
+ "k_side": 0.386,
+ "front_half_width": 0.13,
+ "steer_smooth": 0.0,
+ "wall_theta_deg": 38.394,
+ "wall_lookahead": 0.518,
+ "kp_wall": 1.068,
+ "kd_wall": 0.073
+}

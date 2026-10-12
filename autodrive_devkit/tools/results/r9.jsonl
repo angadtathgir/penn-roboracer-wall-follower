@@ -1,0 +1,6 @@
+{"result": "collision", "laps": [], "best": null, "at": [-1.26, -7.36], "params": {"brake_hyst": 0.2, "planner": "window", "v_corner": 2.0, "a_brake_entry": 6.5}, "score": null}
+{"result": "collision", "laps": [], "best": null, "at": [-1.26, -7.36], "params": {"brake_hyst": 0.2, "planner": "window", "v_corner": 2.5}, "score": null}
+{"result": "collision", "laps": [], "best": null, "at": [-1.25, -7.36], "params": {"brake_hyst": 0.1, "planner": "window", "v_corner": 2.5, "a_brake_entry": 6.0}, "score": null}
+{"result": "collision", "laps": [], "best": null, "at": [-1.26, -7.36], "params": {"brake_hyst": 0.2, "planner": "window", "v_corner": 3.0}, "score": null}
+{"result": "ok", "laps": [39.721, 6.347, 6.298], "best": 6.298, "at": [0.58, 3.8], "params": {"brake_hyst": 0.2}, "score": 6.298}
+{"result": "ok", "laps": [7.474, 6.39, 6.111], "best": 6.111, "at": [0.53, 3.84], "params": {"brake_hyst": 0.4}, "score": 6.111}

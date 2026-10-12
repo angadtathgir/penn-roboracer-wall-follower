@@ -18,6 +18,11 @@ import math
 
 import numpy as np
 
+try:
+    from autodrive_roboracer.lidar_speed import LidarSpeed
+except ImportError:  # loaded by file path (offline harness)
+    from lidar_speed import LidarSpeed
+
 MAX_STEER = 0.5236   # rad at steering command 1.0
 WHEELBASE = 0.324    # m
 RANGE_MAX = 10.0     # m
@@ -27,6 +32,7 @@ class Controller:
     def __init__(self):
         self.params = {
             'mode': 'gap',
+            'speed_source': 'odom',    # 'odom' = measured speed, 'lidar' = LiDAR-only estimate
             # gap follower
             'fov_deg': 63.474,           # only aim at beams within +/- this angle
             'half_width': 0.231,        # car half width + margin used to inflate edges (m)
@@ -58,6 +64,7 @@ class Controller:
             'v_full_throttle': 24.9,   # measured: throttle 0.1 settles at 2.49 m/s
             'kp_speed': 0.2,
             'throttle_min': 0.0,
+            'brake_hyst': 99.0,        # full brake once speed exceeds target by this (m/s)
             # traction control: throttle sets wheel speed, so asking for far more than the
             # car is doing just spins the tyres. Cap wheel speed at v * (1 + slip) + offset.
             # Measured 0 -> 7 m/s: 2.36 s at full throttle, 1.10 s with slip 0.15.
@@ -70,6 +77,8 @@ class Controller:
     def reset(self):
         self.prev_err = 0.0
         self.prev_steer = 0.0
+        self.prev_throttle = 0.0
+        self.speed_est = LidarSpeed()
         self.last = {}
 
     # ------------------------------------------------------------------ helpers
@@ -193,6 +202,8 @@ class Controller:
         p = self.params
         r = self.clean(ranges)
         ang = angle_min + angle_inc * np.arange(len(r))
+        if p['speed_source'] == 'lidar' or speed is None:
+            speed = self.speed_est.update(ranges, angle_min, angle_inc, dt, self.prev_throttle)
         v = max(0.0, float(speed))
 
         if p['mode'] == 'wall':
@@ -217,9 +228,15 @@ class Controller:
 
         v_t = self.target_speed(r, ang, delta, v)
         throttle = v_t / p['v_full_throttle'] + p['kp_speed'] * (v_t - v)
+        # brake hard, not softly: a throttle a little under the car's speed only drags the
+        # motor, while 0 locks the wheels (~8.5 m/s^2 measured)
+        if v > v_t + p['brake_hyst']:
+            throttle = 0.0
         if p['tc_slip'] > 0:
             throttle = min(throttle, (v * (1.0 + p['tc_slip']) + p['tc_offset'])
                            / p['v_full_throttle'])
         throttle = max(p['throttle_min'], min(1.0, throttle))
         self.last.update(v_target=v_t, delta=delta, left=left, right=right)
+        self.prev_throttle = throttle
+        self.last['v_used'] = v
         return throttle, delta / MAX_STEER

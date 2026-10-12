@@ -80,7 +80,7 @@ class Runner:
         if log:
             f = open(log, 'w', newline='')
             w = csv.writer(f)
-            w.writerow(['t', 'x', 'y', 'v', 'v_target', 'thr', 'steer', 'free', 'L', 'R'])
+            w.writerow(['t', 'x', 'y', 'v', 'v_used', 'v_target', 'thr', 'steer', 'free', 'L', 'R'])
         result = 'timeout'
         while time.time() - t0 < timeout:
             self.scan = None
@@ -96,7 +96,7 @@ class Runner:
             if w:
                 L = ctrl.last
                 w.writerow([f'{now - t0:.3f}', f"{self.s['x']:.3f}", f"{self.s['y']:.3f}",
-                            f"{self.s['v']:.2f}", f"{L['v_target']:.2f}", f'{thr:.3f}',
+                            f"{self.s['v']:.2f}", f"{L['v_used']:.2f}", f"{L['v_target']:.2f}", f'{thr:.3f}',
                             f'{steer:.3f}', f"{L['d_free']:.2f}", f"{L['left']:.2f}",
                             f"{L['right']:.2f}"])
             if self.s['coll'] > coll0:

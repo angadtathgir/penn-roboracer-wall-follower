@@ -16,14 +16,15 @@ import subprocess
 import threading
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-CONTAINERS = ['penn-challenge', 'pc2', 'pc3']
+CONTAINERS = ['rr1', 'rr2', 'rr3']
 IN_CONTAINER = '/home/autodrive_devkit/src/autodrive_devkit/tools'
 
 SPACE = {
     'common': {
         'v_max': (6.0, 14.0), 'a_lat': (5.0, 12.0), 'a_brake': (4.0, 10.0),
         'v_corner': (2.0, 6.0), 'a_brake_entry': (3.0, 10.0),
-        'tc_slip': (0.05, 0.3), 'tc_offset': (0.2, 1.0),
+        'tc_slip': (0.05, 0.3), 'tc_offset': (0.2, 1.0), 'brake_hyst': (0.0, 0.8),
+
         'stop_margin': (0.1, 0.9), 'latency': (0.0, 0.15), 'kp_speed': (0.03, 0.5),
         'steer_gain': (0.5, 1.5), 'side_clear': (0.15, 0.35), 'k_side': (0.0, 2.0),
         'front_half_width': (0.13, 0.22), 'steer_smooth': (0.0, 0.6),
