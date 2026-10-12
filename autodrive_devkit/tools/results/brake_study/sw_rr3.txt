@@ -1,0 +1,2 @@
+{"result": "ok", "laps": [7.387, 6.84, 6.352, 6.175, 6.215, 6.215], "best": 6.175, "at": [0.54, 3.83], "params": {"speed_source": "lidar", "brake_hyst": 0.4}}
+{"result": "ok", "laps": [7.29, 6.262, 6.301, 6.279, 6.237, 6.481], "best": 6.237, "at": [0.54, 3.76], "params": {"speed_source": "lidar", "brake_hyst": 0.85}}

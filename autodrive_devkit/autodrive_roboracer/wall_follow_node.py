@@ -27,6 +27,9 @@ class WallFollowNode(Node):
         self.ctrl = Controller()
         if lidar_only:
             self.ctrl.params['speed_source'] = 'lidar'
+            # the scan-matched speed is noisier (~0.25 m/s) than odometry, so only brake hard
+            # when clearly over target; at 0.4 it tapped the brakes on straights
+            self.ctrl.params['brake_hyst'] = 1.0
         for name, default in self.ctrl.params.items():
             self.ctrl.params[name] = self.declare_parameter(name, default).value
         self.add_on_set_parameters_callback(self.on_params)
@@ -46,7 +49,8 @@ class WallFollowNode(Node):
         self.last_stamp = None
         self.n = 0
         self.get_logger().info(f"{self.get_name()} up, mode={self.ctrl.params['mode']}, "
-                               f"speed from {'lidar' if self.lidar_only else 'odom'}")
+                               f"speed from {'lidar' if self.lidar_only else 'odom'}, "
+                               f"brake_hyst={self.ctrl.params['brake_hyst']}")
 
     def on_params(self, params):
         for p in params:
