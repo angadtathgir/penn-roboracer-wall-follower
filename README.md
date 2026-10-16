@@ -10,8 +10,8 @@ A ROS 2 node that drives the AutoDRIVE RoboRacer around the IROS 2026 practice t
 All times are from the simulator's own lap timer with the real ROS nodes. Each version drove 31 laps in a row (1 standing start + 30 flying laps). The worst flying lap was 6.984 s with odometry and 7.062 s LiDAR-only. Raw lap lists are in `tools/results/final_*_31laps.txt`.
 
 **Videos (Driver's Eye, unlisted):**
-- LiDAR + odometry: _link added after upload_
-- LiDAR only: _link added after upload_
+- LiDAR + odometry: https://youtu.be/lLkm8X2-dO0
+- LiDAR only: https://youtu.be/S1rFRY-QsEI
 
 ## Running it
 
