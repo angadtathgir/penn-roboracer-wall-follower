@@ -5,9 +5,9 @@ A ROS 2 node that drives the AutoDRIVE RoboRacer around the IROS 2026 practice t
 | Version | Command | Sensors | Fastest lap | Mean flying lap | Wall contacts |
 |---|---|---|---|---|---|
 | **LiDAR + odometry** | `ros2 run autodrive_roboracer wall_follow_node` | LiDAR for steering, odometry for speed | **6.104 s** | 6.383 s | 0 in 31 laps |
-| **LiDAR only** | `ros2 run autodrive_roboracer wall_follow_node_lidar` | LiDAR only (speed from scan matching) | **6.115 s** | 6.360 s | 0 in 31 laps |
+| **LiDAR only** | `ros2 run autodrive_roboracer wall_follow_node_lidar` | LiDAR only (speed from scan matching) | **6.180 s** | 6.390 s | 0 in 31 laps |
 
-All times are from the simulator's own lap timer with the real ROS nodes. Each version drove 31 laps in a row (1 standing start + 30 flying laps). The worst flying lap was 6.984 s with odometry and 6.675 s LiDAR-only. Raw lap lists are in `tools/results/final_*_31laps.txt`.
+All times are from the simulator's own lap timer with the real ROS nodes. Each version drove 31 laps in a row (1 standing start + 30 flying laps). The worst flying lap was 6.984 s with odometry and 7.062 s LiDAR-only. Raw lap lists are in `tools/results/final_*_31laps.txt`.
 
 **Videos (Driver's Eye, unlisted):**
 - LiDAR + odometry: _link added after upload_
@@ -58,7 +58,7 @@ The target speed is the smallest of four limits:
 Throttle is a feed-forward term (target / 24.9 m/s) plus proportional feedback on speed. Two rules sit on top:
 
 - **Traction control:** wheel speed is capped at `v·(1 + 0.15) + 0.4`, so the tyres don't spin.
-- **Hard braking:** once the car is more than 0.4 m/s over its target speed, the throttle drops to 0. In this simulator that locks the wheels, which brakes about 8.5 m/s². A throttle just under the car's speed only drags the motor.
+- **Hard braking:** once the car is more than 0.4 m/s over its target speed (1.0 m/s in the LiDAR-only version, see below), the throttle drops to 0. In this simulator that locks the wheels, which brakes about 8.5 m/s². A throttle just under the car's speed only drags the motor.
 
 ### Speed without odometry (LiDAR-only version)
 
@@ -68,6 +68,8 @@ Both rules above need the car's speed. The LiDAR-only version estimates it from 
 2. **Throttle model:** throttle sets wheel speed, so the car's speed follows the last command with limited acceleration and braking.
 
 The model predicts every scan. The scan-match result corrects it in proportion to how well the walls constrain forward motion. Walls facing the car give a confident correction; two parallel side walls give almost none, and there the model carries the estimate. Against odometry, the estimate is off by 0.17 m/s on average over a lap. The two versions end up with practically the same lap times.
+
+The estimate is noisier than odometry (about ±0.27 m/s on the straights) and reads a little high while braking. With the 0.4 m/s brake threshold, that noise kept crossing the threshold, and the car tapped its brakes on the straights: it braked for 16.7% of the lap, against 12% with odometry. The LiDAR-only version therefore brakes hard only once it is 1.0 m/s over target. That cut braking to about 9% of the lap at the same lap times within run-to-run noise (best 6.180 s against 6.115 s, mean 6.390 s against 6.360 s). The logs are in `tools/results/brake_study/`, and `tools/brake_events.py` counts the brake events in a lap log.
 
 ## How it was tuned
 
@@ -90,7 +92,8 @@ What moved the lap time:
 | Corner-entry speed limit (most crashes were at the hairpin after the long straight) | 6.51 s, and 45/60 configs clean over 3 laps |
 | Traction control (0 → 7 m/s took 2.36 s at full throttle and 1.10 s with slip capped at 15%) | 6.28 s, and 61/66 configs clean over 3 laps |
 | Wider search plus a small aim-point shift toward the inside of turns | 6.12 s in the runner, 6.140 s with the ROS node |
-| Hard braking (throttle 0 once 0.4 m/s over target) | **6.104 s** with the ROS node (LiDAR + odometry), **6.115 s** LiDAR-only |
+| Hard braking (throttle 0 once 0.4 m/s over target) | **6.104 s** with the ROS node (LiDAR + odometry), 6.115 s LiDAR-only |
+| LiDAR-only: brake threshold raised to 1.0 m/s (see below) | **6.180 s** LiDAR-only, with half the braking time |
 
 Things that didn't work:
 
